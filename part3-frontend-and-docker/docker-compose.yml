@@ -1,0 +1,34 @@
+version: '3'
+services:
+  train:
+    build: 
+      context: ./train
+      dockerfile: Dockerfile_train
+    container_name: train
+    volumes:
+      - models:/train/models
+
+  predict:
+    build:
+      context: ./predict
+      dockerfile: Dockerfile_predict
+    volumes:
+      - models:/predict/models
+    depends_on:
+      - train
+    ports:
+      - "8081:8081"
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile_frontend
+    volumes:
+      - models:/frontend/models
+    depends_on:
+      - predict
+    ports:
+      - "8080:8080"
+
+volumes:
+  models:
